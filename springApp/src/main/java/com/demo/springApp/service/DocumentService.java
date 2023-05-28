@@ -6,14 +6,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.demo.springApp.dto.PostComments;
 import com.demo.springApp.model.DocumentEntity;
 import com.demo.springApp.repository.DocumentRepository;
-import com.demo.springApp.utils.Constants;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class DocumentService {
@@ -32,7 +28,7 @@ public class DocumentService {
 	
 	
 
-	public DocumentEntity getFileById(String id) {
+	public DocumentEntity getDocumentById(String id) {
 		Optional<DocumentEntity> documentOptional = repository.findById(id);
 		if (documentOptional.isPresent()) {
 			return documentOptional.get();
@@ -40,7 +36,7 @@ public class DocumentService {
 		return null;
 	}
 
-	public List<DocumentEntity> getFileList() {
+	public List<DocumentEntity> getDocumentList() {
 		return repository.findAll();
 	}
 
@@ -53,23 +49,6 @@ public class DocumentService {
 		entity.setDocumentType(file.getContentType());
 		entity.setDocumentData(file.getBytes());
 		return repository.save(entity);
-	}
-
-
-
-	public List<PostComments> callThirdPrtyAPI() {
-		
-		String uri = Constants.POST_URL;
-        RestTemplate restTemplate = new RestTemplate();
-        
-        ObjectMapper mapper = new ObjectMapper();
-        
-        Object object  = restTemplate.getForObject(uri, List.class);
-        
-        
-        
-        //mapper.readV // (List<PostComments>) list = mapper.readValue(object, PostComments);
-		return null;
 	}
 
 }
