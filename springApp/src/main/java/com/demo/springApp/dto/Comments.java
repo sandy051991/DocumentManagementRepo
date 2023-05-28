@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Comments {
 	
-	ArrayList list = (ArrayList)new ArrayList<PostComments>();
+	ArrayList list = new ArrayList<PostComments>();
 
 	public ArrayList getList() {
 		return list;

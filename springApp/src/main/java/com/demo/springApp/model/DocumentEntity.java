@@ -1,5 +1,6 @@
 package com.demo.springApp.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,65 +9,69 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="files")
+@Table(name="documents")
 
 public class DocumentEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Long id;
+	@Column(name = "document_id")
+	public Long documentId;
 	
-	public String name;
+	@Column(name = "document_name")
+	public String documentName;
 	
-	public String type;
+	@Column(name = "document_type")
+	public String documentType;
 	
 	@Lob
-	public byte[] data;
+	@Column(name = "document_data")
+	public byte[] documentData;
 	
 	public DocumentEntity() {
 		
 	}
-
-	public DocumentEntity(Long id, String name, String type, byte[] data) {
+	
+	public DocumentEntity(Long documentId, String documentName, String documentType, byte[] documentData) {
 		super();
-		this.id = id;
-		this.name = name;
-		this.type = type;
-		this.data = data;
+		this.documentId = documentId;
+		this.documentName = documentName;
+		this.documentType = documentType;
+		this.documentData = documentData;
 	}
 
-	public Long getId() {
-		return id;
+
+
+	public Long getDocumentId() {
+		return documentId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setDocumentId(Long documentId) {
+		this.documentId = documentId;
 	}
 
-	public String getName() {
-		return name;
+	public String getDocumentName() {
+		return documentName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDocumentName(String documentName) {
+		this.documentName = documentName;
 	}
 
-	public String getType() {
-		return type;
+	public String getDocumentType() {
+		return documentType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
 	}
 
-	public byte[] getData() {
-		return data;
+	public byte[] getDocumentData() {
+		return documentData;
 	}
 
-	public void setData(byte[] data) {
-		this.data = data;
+	public void setDocumentData(byte[] documentData) {
+		this.documentData = documentData;
 	}
-	
-	
 
 }

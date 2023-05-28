@@ -7,6 +7,7 @@ public class PostComments {
 	int id;
 	String title;
 	String body;
+	
 	public int getUserId() {
 		return userId;
 	}
