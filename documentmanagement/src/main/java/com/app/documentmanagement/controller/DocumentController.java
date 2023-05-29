@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.documentmanagement.dto.ErrorDto;
+import com.app.documentmanagement.feign.util.Constant;
 import com.app.documentmanagement.feign.util.PostsCommentsFeignUtil;
 import com.app.documentmanagement.model.DocumentEntity;
 import com.app.documentmanagement.service.DocumentService;
@@ -33,42 +35,59 @@ public class DocumentController {
 
 	@PostMapping("/save")
 	public ResponseEntity<DocumentEntity> uploadDocument(@RequestParam("file") MultipartFile file) throws IOException {
-		String extn = FilenameUtils.getExtension(file.getOriginalFilename());
-		if (extn.equalsIgnoreCase("PDF")) {
-			return new ResponseEntity<>(service.save(file), HttpStatus.CREATED);
+		if (!FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("PDF")) {
+			ErrorDto errorDto = new ErrorDto(Constant.FORMAT_NOR_SUPPORTED_CODE, Constant.FORMAT_NOR_SUPPORTED_MSG,
+					Constant.FORMAT_NOR_SUPPORTED_DTL);
+			return new ResponseEntity(errorDto, HttpStatus.BAD_REQUEST);
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		return new ResponseEntity<>(service.save(file), HttpStatus.CREATED);
+	}
+
+	@PutMapping("/update")
+	public ResponseEntity updateDocumentById(@RequestParam("id") String id, @RequestParam("file") MultipartFile file)
+			throws IOException {
+		if (!FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("PDF")) {
+			ErrorDto errorDto = new ErrorDto(Constant.FORMAT_NOR_SUPPORTED_CODE, Constant.FORMAT_NOR_SUPPORTED_MSG,
+					Constant.FORMAT_NOR_SUPPORTED_DTL);
+			return new ResponseEntity(errorDto, HttpStatus.BAD_REQUEST);
+		}
+
+		DocumentEntity entity = service.getDocumentById(id);
+		if (entity == null) {
+			ErrorDto error = new ErrorDto(Constant.DOCUMENT_NOT_FOUND_CODE, Constant.DOCUMENT_NOT_FOUND_MSG,
+					Constant.DOCUMENT_NOT_FOUND_DTL + id);
+			return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+		}
+
+		service.UpdateDocumentById(entity, file);
+		return new ResponseEntity("Document updated sucessfully", HttpStatus.OK);
+
+	}
+
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity deleteDocumentById(@PathVariable String id) {
+		if (service.getDocumentById(id) == null) {
+			ErrorDto error = new ErrorDto(Constant.DOCUMENT_NOT_FOUND_CODE, Constant.DOCUMENT_NOT_FOUND_MSG,
+					Constant.DOCUMENT_NOT_FOUND_DTL + id);
+			return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+		}
+		service.deleteDocumentById(id);
+		return new ResponseEntity("Document deleted successfully", HttpStatus.OK);
 	}
 
 	@GetMapping("/document/{id}")
 	public ResponseEntity<DocumentEntity> getDocument(@PathVariable String id) {
+		if (service.getDocumentById(id) == null) {
+			ErrorDto error = new ErrorDto(Constant.DOCUMENT_NOT_FOUND_CODE, Constant.DOCUMENT_NOT_FOUND_MSG,
+					Constant.DOCUMENT_NOT_FOUND_DTL + id);
+			return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(service.getDocumentById(id), HttpStatus.OK);
 	}
 
 	@GetMapping("/list")
 	public ResponseEntity<List<DocumentEntity>> getDocumentList() {
 		return new ResponseEntity<>(service.getDocumentList(), HttpStatus.OK);
-	}
-
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<String> deleteDocumentById(@PathVariable String id) {
-		service.deleteDocumentById(id);
-		return new ResponseEntity<String>(HttpStatus.OK);
-	}
-
-	@PutMapping("/update")
-	public String updateDocumentById(@RequestParam("id") String id, @RequestParam("file") MultipartFile file)
-			throws IOException {
-		String extn = FilenameUtils.getExtension(file.getOriginalFilename());
-		if (extn.equalsIgnoreCase("PDF")) {
-			DocumentEntity entity = service.getDocumentById(id);
-			if (entity != null) {
-				service.UpdateDocumentById(entity, file);
-				return "Document updated sucessfully";
-			}
-			return "No document found by the given id::" + id;
-		}
-		return "Document type is not supported. Only pdf document is allowed";
 	}
 
 	@GetMapping("/document/{docId}/posts")
