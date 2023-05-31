@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface PostsCommentsFeignUtil {
 
 	@GetMapping("/users/{documentId}/posts")
-	public String getPostsByDocId(@PathVariable(value = "documentId") String documentId);
+	public String getPostsByDocId(@PathVariable(value = "documentId") Long documentId);
 	
 	@GetMapping("/posts/{postId}/comments")
-	public String getCommentsByPostId(@PathVariable(value = "postId") String postId);
+	public String getCommentsByPostId(@PathVariable(value = "postId") Long postId);
 
 }

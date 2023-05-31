@@ -31,16 +31,6 @@ public class DocumentEntity {
 	public DocumentEntity() {
 		
 	}
-	
-	public DocumentEntity(Long documentId, String documentName, String documentType, byte[] documentData) {
-		super();
-		this.documentId = documentId;
-		this.documentName = documentName;
-		this.documentType = documentType;
-		this.documentData = documentData;
-	}
-
-
 
 	public Long getDocumentId() {
 		return documentId;

@@ -1,6 +1,5 @@
 package com.app.documentmanagement.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -19,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.app.documentmanagement.dto.ErrorDto;
 import com.app.documentmanagement.feign.util.Constant;
-import com.app.documentmanagement.feign.util.PostsCommentsFeignUtil;
+import com.app.documentmanagement.feign.util.DocumentExceptionHandler;
 import com.app.documentmanagement.model.DocumentEntity;
 import com.app.documentmanagement.service.DocumentService;
 
@@ -30,74 +29,117 @@ public class DocumentController {
 	@Autowired
 	private DocumentService service;
 
-	@Autowired
-	private PostsCommentsFeignUtil util;
-
 	@PostMapping("/save")
-	public ResponseEntity<DocumentEntity> uploadDocument(@RequestParam("file") MultipartFile file) throws IOException {
+	public ResponseEntity uploadDocument(@RequestParam("file") MultipartFile file) {
 		if (!FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("PDF")) {
 			ErrorDto errorDto = new ErrorDto(Constant.FORMAT_NOR_SUPPORTED_CODE, Constant.FORMAT_NOR_SUPPORTED_MSG,
 					Constant.FORMAT_NOR_SUPPORTED_DTL);
-			return new ResponseEntity(errorDto, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>(service.save(file), HttpStatus.CREATED);
+
+		ResponseEntity response = null;
+		try {
+			response = new ResponseEntity<>(service.save(file), HttpStatus.CREATED);
+		} catch (Exception ex) {
+			response = DocumentExceptionHandler.handleException(ex);
+		}
+		return response;
+
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity updateDocumentById(@RequestParam("id") String id, @RequestParam("file") MultipartFile file)
-			throws IOException {
+	public ResponseEntity updateDocumentById(@RequestParam("id") Long id, @RequestParam("file") MultipartFile file) {
+
 		if (!FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("PDF")) {
 			ErrorDto errorDto = new ErrorDto(Constant.FORMAT_NOR_SUPPORTED_CODE, Constant.FORMAT_NOR_SUPPORTED_MSG,
 					Constant.FORMAT_NOR_SUPPORTED_DTL);
-			return new ResponseEntity(errorDto, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
 		}
 
-		DocumentEntity entity = service.getDocumentById(id);
-		if (entity == null) {
-			ErrorDto error = new ErrorDto(Constant.DOCUMENT_NOT_FOUND_CODE, Constant.DOCUMENT_NOT_FOUND_MSG,
-					Constant.DOCUMENT_NOT_FOUND_DTL + id);
-			return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+		ResponseEntity response = null;
+		try {
+			DocumentEntity entity = service.getDocumentById(id);
+			if (entity == null) {
+				ErrorDto error = new ErrorDto(Constant.DOCUMENT_NOT_FOUND_CODE, Constant.DOCUMENT_NOT_FOUND_MSG,
+						Constant.DOCUMENT_NOT_FOUND_DTL + id);
+				response = new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+			} else {
+				service.UpdateDocumentById(entity, file);
+				response = new ResponseEntity<>("Document updated sucessfully", HttpStatus.OK);
+			}
+		} catch (Exception ex) {
+			response = DocumentExceptionHandler.handleException(ex);
 		}
-
-		service.UpdateDocumentById(entity, file);
-		return new ResponseEntity("Document updated sucessfully", HttpStatus.OK);
-
+		return response;
 	}
 
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity deleteDocumentById(@PathVariable String id) {
+	public ResponseEntity deleteDocumentById(@PathVariable Long id) {
 		if (service.getDocumentById(id) == null) {
 			ErrorDto error = new ErrorDto(Constant.DOCUMENT_NOT_FOUND_CODE, Constant.DOCUMENT_NOT_FOUND_MSG,
 					Constant.DOCUMENT_NOT_FOUND_DTL + id);
-			return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 		}
-		service.deleteDocumentById(id);
-		return new ResponseEntity("Document deleted successfully", HttpStatus.OK);
+		
+		ResponseEntity response = null;
+		try {
+			service.deleteDocumentById(id);
+			response = new ResponseEntity<>("Document deleted successfully", HttpStatus.OK);
+		}catch(Exception ex) {
+			response = DocumentExceptionHandler.handleException(ex);
+		}
+		return response;
 	}
 
 	@GetMapping("/document/{id}")
-	public ResponseEntity<DocumentEntity> getDocument(@PathVariable String id) {
+	public ResponseEntity getDocument(@PathVariable Long id) {
 		if (service.getDocumentById(id) == null) {
 			ErrorDto error = new ErrorDto(Constant.DOCUMENT_NOT_FOUND_CODE, Constant.DOCUMENT_NOT_FOUND_MSG,
 					Constant.DOCUMENT_NOT_FOUND_DTL + id);
-			return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(service.getDocumentById(id), HttpStatus.OK);
+		
+		ResponseEntity response = null;
+		try {
+			service.deleteDocumentById(id);
+			response = new ResponseEntity<>(service.getDocumentById(id), HttpStatus.OK);
+		}catch(Exception ex) {
+			response = DocumentExceptionHandler.handleException(ex);
+		}
+		return response;
 	}
 
 	@GetMapping("/list")
 	public ResponseEntity<List<DocumentEntity>> getDocumentList() {
-		return new ResponseEntity<>(service.getDocumentList(), HttpStatus.OK);
+		ResponseEntity response = null;
+		try {
+			response = new ResponseEntity<>(service.getDocumentList(), HttpStatus.OK);
+		}catch(Exception ex) {
+			response = DocumentExceptionHandler.handleException(ex);
+		}
+		return response;
 	}
 
 	@GetMapping("/document/{docId}/posts")
-	public String getPostsByDocId(@PathVariable String docId) {
-		return util.getPostsByDocId(docId);
+	public ResponseEntity getPostsByDocId(@PathVariable Long docId) {
+		ResponseEntity response = null;
+		try {
+			response = new ResponseEntity<>(service.getPostsByDocId(docId), HttpStatus.OK);
+		}catch(Exception ex) {
+			response = DocumentExceptionHandler.handleException(ex);
+		}
+		return response;
 	}
 
 	@GetMapping("/posts/{postId}/comments")
-	public String getCommentsData(@PathVariable String postId) {
-		return util.getCommentsByPostId(postId);
+	public ResponseEntity getCommentsData(@PathVariable Long postId) {
+		ResponseEntity response = null;
+		try {
+			response = new ResponseEntity<>(service.getCommentsData(postId), HttpStatus.OK);
+		}catch(Exception ex) {
+			response = DocumentExceptionHandler.handleException(ex);
+		}
+		return response;
 	}
 
 }
