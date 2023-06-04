@@ -49,7 +49,7 @@ public class DocumentExceptionHandler {
 			response = new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
-		// when passeed variable is not of required type
+		// when passed variable is not of required type
 		else if (ex instanceof MethodArgumentTypeMismatchException) {
 			MethodArgumentTypeMismatchException mmex = (MethodArgumentTypeMismatchException) ex;
 
@@ -79,7 +79,7 @@ public class DocumentExceptionHandler {
 			response = new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
-		// Provider timeout exception
+		// Provider host exception
 		else if (ex instanceof DataAccessResourceFailureException || ex instanceof UnknownHostException) {
 			ErrorDto errorDto = new ErrorDto(Constant.HOST_UNAVAILABLE_ERROR_CODE, Constant.HOST_UNAVAILABLE_MESSAGE,
 					Constant.HOST_UNAVAILABLE_DETAILS);

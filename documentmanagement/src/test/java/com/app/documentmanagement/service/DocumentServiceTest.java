@@ -45,7 +45,6 @@ public class DocumentServiceTest {
 	@Test
 	public void testGetDocumentById() {
 		when(repository.findById(anyLong())).thenReturn(Optional.of(getEntity()));
-
 		DocumentEntity entity = service.getDocumentById((long) 1);
 		assertEquals(1, entity.getDocumentId());
 		assertEquals("dummy Pdf.pdf", entity.getDocumentName());
