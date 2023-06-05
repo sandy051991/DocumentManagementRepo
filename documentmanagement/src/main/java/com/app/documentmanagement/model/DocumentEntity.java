@@ -1,5 +1,7 @@
 package com.app.documentmanagement.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,12 @@ public class DocumentEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "document_id")
 	public Long documentId;
+	
+	@Column(name = "document_correlation_id")
+	public String documentCorrelationId;
+	
+	@Column(name = "document_create_time")
+	public LocalDateTime documentCreateTime;
 	
 	@Column(name = "document_name")
 	public String documentName;
@@ -38,6 +46,22 @@ public class DocumentEntity {
 
 	public void setDocumentId(Long documentId) {
 		this.documentId = documentId;
+	}
+
+	public String getDocumentCorrelationId() {
+		return documentCorrelationId;
+	}
+
+	public void setDocumentCorrelationId(String documentCorrelationId) {
+		this.documentCorrelationId = documentCorrelationId;
+	}
+	
+	public LocalDateTime getDocumentCreateTime() {
+		return documentCreateTime;
+	}
+
+	public void setDocumentCreateTime(LocalDateTime documentCreateTime) {
+		this.documentCreateTime = documentCreateTime;
 	}
 
 	public String getDocumentName() {

@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,8 +31,10 @@ public class DocumentServiceTest {
 	public DocumentEntity getEntity() {
 		DocumentEntity entity = new DocumentEntity();
 		entity.setDocumentId((long) 1);
-		entity.setDocumentName("dummy Pdf.pdf");
+		entity.setDocumentName("dummy.pdf");
 		entity.setDocumentType("application/pdf");
+		entity.setDocumentCorrelationId("dummyRelId");
+		entity.setDocumentCreateTime(LocalDateTime.now());
 		
 		return entity;
 	}
@@ -47,8 +50,9 @@ public class DocumentServiceTest {
 		when(repository.findById(anyLong())).thenReturn(Optional.of(getEntity()));
 		DocumentEntity entity = service.getDocumentById((long) 1);
 		assertEquals(1, entity.getDocumentId());
-		assertEquals("dummy Pdf.pdf", entity.getDocumentName());
+		assertEquals("dummy.pdf", entity.getDocumentName());
 		assertEquals("application/pdf", entity.getDocumentType());
+		assertEquals("dummyRelId", entity.getDocumentCorrelationId());
 	}
 
 	@Test
@@ -56,8 +60,9 @@ public class DocumentServiceTest {
 		when(repository.save(any())).thenReturn(getEntity());
 		DocumentEntity entity = repository.save(getEntity());
 		assertEquals(1, entity.getDocumentId());
-		assertEquals("dummy Pdf.pdf", entity.getDocumentName());
+		assertEquals("dummy.pdf", entity.getDocumentName());
 		assertEquals("application/pdf", entity.getDocumentType());
+		assertEquals("dummyRelId", entity.getDocumentCorrelationId());
 	}
 	
 	@Test
@@ -65,8 +70,9 @@ public class DocumentServiceTest {
 		when(repository.findAll()).thenReturn(getEntityList());
 		DocumentEntity entity = repository.findAll().get(0);
 		assertEquals(1, entity.getDocumentId());
-		assertEquals("dummy Pdf.pdf", entity.getDocumentName());
+		assertEquals("dummy.pdf", entity.getDocumentName());
 		assertEquals("application/pdf", entity.getDocumentType());
+		assertEquals("dummyRelId", entity.getDocumentCorrelationId());
 		
 	}
 
@@ -75,7 +81,8 @@ public class DocumentServiceTest {
 		when(repository.save(any())).thenReturn(getEntity());
 		DocumentEntity entity = repository.save(getEntity());
 		assertEquals(1, entity.getDocumentId());
-		assertEquals("dummy Pdf.pdf", entity.getDocumentName());
+		assertEquals("dummy.pdf", entity.getDocumentName());
 		assertEquals("application/pdf", entity.getDocumentType());
+		assertEquals("dummyRelId", entity.getDocumentCorrelationId());
 	}
 }

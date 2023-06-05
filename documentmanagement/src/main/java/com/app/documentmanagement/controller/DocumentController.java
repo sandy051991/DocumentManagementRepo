@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +36,7 @@ public class DocumentController {
 	private DocumentService service;
 
 	@PostMapping("/save")
-	public ResponseEntity saveDocument(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity saveDocument(@RequestParam("file") MultipartFile file, @RequestHeader String correlationId) {
 		log.info("DocumentController - inside saveDocument(): start");
 		if (!FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("PDF")) {
 			log.info("DocumentController - inside saveDocument(): File format is not of type PDF!! coming format is " + FilenameUtils.getExtension(file.getOriginalFilename()));
@@ -47,7 +48,7 @@ public class DocumentController {
 		ResponseEntity response = null;
 		try {
 			log.info("DocumentController - inside saveDocument(): start saving document data in in-memory database");
-			response = new ResponseEntity<>(service.save(file), HttpStatus.CREATED);
+			response = new ResponseEntity<>(service.save(file, correlationId), HttpStatus.CREATED);
 			log.info("DocumentController - inside saveDocument(): Document saved successfully in in-memory database");
 		} catch (Exception ex) {
 			log.error("DocumentController - inside saveDocument(): Getting exception while saving Document "+ ex.getMessage());

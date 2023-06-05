@@ -6,10 +6,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class DocumentmanagementApplication {
+public class DocumentManagementApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DocumentmanagementApplication.class, args);
+		SpringApplication.run(DocumentManagementApplication.class, args);
 	}
 
 }

@@ -1,15 +1,15 @@
 package com.app.documentmanagement.dto;
 
 public class ErrorDto {
-	
+
 	private Integer code;
-	
+
 	private String message;
-	
+
 	private String detail;
-	
+
 	public ErrorDto() {
-		
+
 	}
 
 	public ErrorDto(Integer code, String message, String detail) {
@@ -41,8 +41,6 @@ public class ErrorDto {
 
 	public void setDetail(String detail) {
 		this.detail = detail;
-	}	
+	}
 
-	
-	
 }
